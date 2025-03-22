@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Mod</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            background-color: white;
+            color: black;
+        }
+
+        #menu {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: black;
+            color: white;
+            border-radius: 10px;
+            width: 260px;
+            z-index: 999;
+            border-width: 2px;
+            border-style: solid;
+            animation: rainbow-border 2s infinite;
+            font-size: 12px;
+            overflow: hidden;
+            transition: height 0.3s ease;
+        }
+
+        #menu.collapsed {
+            height: 35px;
+        }
+
+        #menuHeader {
+            display: flex;
+            align-items: center;
+            background-color: #FFA500;
+            padding: 3px;
+            border-radius: 10px 10px 0 0;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        #menuHeader img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            margin-right: 6px;
+        }
+
+        #menuTitle {
+            flex-grow: 1;
+            text-align: center;
+            font-weight: bold;
+            font-size: 12px;
+            color: white;
+        }
+
+        #menuContent {
+            padding: 10px;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .nav-buttons button {
+            background-color: #d5a674; /* Màu giống như ảnh */
+            border: none;
+            padding: 3px 5px; /* Thu nhỏ nút */
+            border-radius: 5px;
+            font-size: 10px; /* Thu nhỏ chữ */
+            cursor: pointer;
+            color: black;
+            width: 45%; /* Điều chỉnh kích thước để tạo khoảng cách giữa nút */
+        }
+
+        .nav-buttons button.active {
+            background-color: #c68b50; /* Màu khác khi được chọn */
+            color: white;
+        }
+
+        .rainbow-text {
+            margin-bottom: 10px;
+            font-weight: bold;
+            overflow: hidden; /* Ẩn các phần chữ ngoài khung */
+            white-space: nowrap; /* Không cho xuống dòng */
+        }
+
+        /* Hiệu ứng nhấp nháy và chạy từ trái sang phải */
+        .rainbow-text span {
+            display: inline-block;
+            animation: blink 1s infinite, move-text 8s linear infinite;
+            font-size: 14px; /* Điều chỉnh kích thước chữ nếu cần */
+        }
+
+        @keyframes blink {
+            0% { color: red; }
+            14% { color: orange; }
+            28% { color: yellow; }
+            42% { color: green; }
+            56% { color: blue; }
+            70% { color: indigo; }
+            84% { color: violet; }
+            100% { color: red; }
+        }
+
+        @keyframes move-text {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* Màu trắng cho phần chữ, màu riêng cho thông số */
+        .colored-text.date-time {
+            color: white;
+        }
+        .colored-text.date-time .value {
+            color: purple;
+        }
+
+        .colored-text.fps {
+            color: white;
+        }
+        .colored-text.fps .value {
+            color: yellow;
+        }
+
+        .colored-text.beme {
+            color: cyan;
+        }
+
+        .colored-text.facebook,
+        .colored-text.zalo {
+            transition: color 0.3s;
+        }
+
+        .spaced-section {
+            margin-top: 20px;
+        }
+
+        /* Khoảng cách giữa các mục trong Phát Âm */
+        #phatAmContent input,
+        #phatAmContent button {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div id="menu">
+    <div id="menuHeader">
+        <img src="https://i.postimg.cc/4x17S52w/IMG-0813.jpg" alt="Logo">
+        <div id="menuTitle">Menu Demo Bê Mê Game 🐑!</div>
+    </div>
+    
+    <div id="menuContent">
+        <div class="nav-buttons">
+            <button id="home" class="active">Home</button>
+            <button id="phatAm">Nhạc</button>
+        </div>
+
+        <!-- Dòng chữ 7 màu chạy từ trái sang phải và nhấp nháy -->
+        <div class="rainbow-text"><span>Chào mừng bạn đến với Bê Mê Game 🐑!</span></div>
+
+        <!-- Nội dung trang Home -->
+        <div id="homeContent" class="active">
+            <div class="menu-item"><a href="https://www.facebook.com/QuocChien2709?mibextid=LQQJ4d" class="colored-text facebook" id="facebookLink">Facebook</a></div>
+            <div class="menu-item"><a href="https://zalo.me/84385531007" class="colored-text zalo" id="zaloLink">Zalo</a></div>
+            <div class="menu-item colored-text date-time" id="timeDisplay">Giờ: <span class="value"></span></div>
+            <div class="menu-item colored-text date-time" id="dateDisplay">Ngày: <span class="value"></span></div>
+            <div class="menu-item colored-text fps" id="fpsDisplay">FPS: <span class="value"></span></div>
+            <div class="menu-item colored-text beme">Bê Mê Game 🐑</div>
+        </div>
+
+        <!-- Nội dung trang Phát Âm -->
+        <div id="phatAmContent" class="spaced-section" style="display: none;">
+            <!-- Nút bật/tắt nhạc -->
+            <div class="menu-item">
+                <button onclick="toggleMusic()">Bật/Tắt Nhạc</button>
+            </div>
+            
+            <!-- Input chọn file nhạc -->
+            <div class="menu-item">
+                <input type="file" id="audioFile" accept="audio/mp3" onchange="loadAudioFile(event)">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Thêm phần tử audio để phát nhạc -->
+<audio id="backgroundMusic" loop></audio> 
+
+<script>
+    let fpsInterval, startTime, now, then, elapsed;
+    let fps = 0;
+    let isPlaying = false;
+    const audioElement = document.getElementById('backgroundMusic');
+
+    function startFpsCounter() {
+        fpsInterval = 10 / 100; 
+        then = Date.now();
+        startTime = then;
+        updateFps();
+    }
+
+    function updateFps() {
+        requestAnimationFrame(updateFps);
+
+        now = Date.now();
+        elapsed = now - then;
+
+        if (elapsed > fpsInterval) {
+            then = now - (elapsed % fpsInterval);
+
+            fps = Math.round(1000 / elapsed);
+            document.getElementById('fpsDisplay').querySelector('.value').textContent = fps;
+        }
+    }
+
+    function updateDateTime() {
+        const now = new Date();
+        document.getElementById('timeDisplay').querySelector('.value').textContent = now.toLocaleTimeString();
+        document.getElementById('dateDisplay').querySelector('.value').textContent = now.toLocaleDateString();
+    }
+
+    setInterval(updateDateTime, 1000);
+    startFpsCounter();
+
+    document.getElementById('menuHeader').addEventListener('click', () => {
+        const menu = document.getElementById('menu');
+        menu.classList.toggle('collapsed');
+    });
+
+    // Chuyển đổi giữa trang Home và Mod Skin
+    document.getElementById('home').addEventListener('click', () => {
+        document.getElementById('homeContent').style.display = 'block';
+        document.getElementById('phatAmContent').style.display = 'none';
+        document.getElementById('home').classList.add('active');
+        document.getElementById('phatAm').classList.remove('active');
+    });
+
+    document.getElementById('phatAm').addEventListener('click', () => {
+        document.getElementById('homeContent').style.display = 'none';
+        document.getElementById('phatAmContent').style.display = 'block';
+        document.getElementById('home').classList.remove('active');
+        document.getElementById('phatAm').classList.add('active');
+    });
+
+    // Luôn ẩn phần chọn tệp và bật/tắt nhạc khi tải lại trang
+    window.addEventListener('load', () => {
+        document.getElementById('homeContent').style.display = 'block';
+        document.getElementById('phatAmContent').style.display = 'none';
+        document.getElementById('home').classList.add('active');
+        document.getElementById('phatAm').classList.remove('active');
+    });
+
+    // Đổi màu các phần tử ngày giờ, Facebook, Zalo, và FPS
+    function changeColor(element) {
+        const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'indigo', 'violet'];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        element.style.color = randomColor;
+    }
+
+    function startColorChange() {
+        const facebookLink = document.getElementById('facebookLink');
+        const zaloLink = document.getElementById('zaloLink');
+        const timeDisplay = document.getElementById('timeDisplay').querySelector('.value');
+        const dateDisplay = document.getElementById('dateDisplay').querySelector('.value');
+        const fpsDisplay = document.getElementById('fpsDisplay').querySelector('.value');
+
+        setInterval(() => changeColor(facebookLink), 1000);
+        setInterval(() => changeColor(zaloLink), 1000);
+        setInterval(() => changeColor(timeDisplay), 1000);
+        setInterval(() => changeColor(dateDisplay), 1000);
+        setInterval(() => changeColor(fpsDisplay), 1000);
+    }
+
+    startColorChange();
+
+    // Hàm để tải file nhạc được chọn
+    function loadAudioFile(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const fileURL = URL.createObjectURL(file);
+            audioElement.src = fileURL;
+            audioElement.play();
+            isPlaying = true;
+        }
+    }
+
+    // Hàm để bật/tắt nhạc
+    function toggleMusic() {
+        if (isPlaying) {
+            audioElement.pause();
+        } else {
+            audioElement.play();
+        }
+        isPlaying = !isPlaying;
+    }
+</script>
+
+</body>
+</html>
